@@ -10,6 +10,7 @@ export async function up(knex: Knex): Promise<void> {
 				table.string('content').notNullable();
 				table.enu('type', ['pending', 'success', 'failed']);
 				table.timestamp('resolvedAt').nullable();
+				table.boolean('isPublished').notNullable();
 				table.timestamps(true, true);
 			});
 }

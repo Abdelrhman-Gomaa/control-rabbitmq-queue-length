@@ -10,6 +10,7 @@ export class Message extends Model {
   from!: string;
   content!: string;
   type!: string;
+  isPublished!: boolean;
   resolvedAt?: string;
 
   static get idColumn() {
@@ -19,7 +20,7 @@ export class Message extends Model {
   static get jsonSchema() {
     return {
       type: 'object',
-      required: ['to', 'from', 'content'],
+      required: ['to', 'from', 'content', 'isPublished'],
 
       properties: {
         id: { type: 'integer' },
@@ -27,6 +28,7 @@ export class Message extends Model {
         from: { type: 'string' },
         content: { type: 'string' },
         type: { type: 'string', enum: ['pending', 'success', 'failed'], default: 'pending' },
+        isPublished: { type: 'boolean' },
         resolvedAt: { type: 'string', format: 'date-time' }
       }
     };

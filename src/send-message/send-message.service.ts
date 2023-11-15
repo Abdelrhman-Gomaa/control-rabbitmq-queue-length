@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { RabbitMQService } from 'src/_common/rabbitmq-config/rabbitmq.service';
 import { SendMessageInput } from './input/send-message.input';
 import { Message } from './models/message.model';
+import { messageTypeEnum } from './send-message.enum';
 
 @Injectable()
 export class MessageService implements OnModuleInit {
@@ -17,12 +18,14 @@ export class MessageService implements OnModuleInit {
     if (queue.messageCount >= 10) {
       return await Message.query().insert({
         ...input,
-        type: 'pending'
+        isPublished: false,
+        type: messageTypeEnum.pending
       });
     } else {
       const message = await Message.query().insert({
         ...input,
-        type: 'pending'
+        isPublished: true,
+        type: messageTypeEnum.pending
       });
       const payload = JSON.stringify({
         id: message.id,
