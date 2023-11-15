@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { RabbitmqModule } from 'src/_common/rabbitmq-config/rabbitmq.module';
-import { ConsumerService } from './sms-consumer.service';
+import { ConsumerService } from './consumer.service';
 
 @Module({
 	imports: [
