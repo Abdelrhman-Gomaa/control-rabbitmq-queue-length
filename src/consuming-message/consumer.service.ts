@@ -11,8 +11,8 @@ export class ConsumerService implements OnModuleInit {
 	) { }
 
 	onModuleInit(): void {
-		// console.log('>>>>>>>> Stop Consuming Now ...');
-		this.startConsuming();
+		console.log('>>>>>>>> Stop Consuming Now ...');
+		// this.startConsuming();
 	}
 
 	async startConsuming(): Promise<void> {

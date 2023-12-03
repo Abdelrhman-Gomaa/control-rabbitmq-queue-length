@@ -4,15 +4,12 @@ import { Queue } from 'bull';
 
 @Injectable()
 export class TrackMessageService implements OnModuleInit {
-
   onModuleInit(): void {
-    // console.log('>>>>>>>> stop track message now ...');
-    this.trackDelayedMessage();
+    console.log('>>>>>>>> stop track message now ...');
+    // this.trackDelayedMessage();
   }
 
-  constructor(
-    @InjectQueue('track-message') private readonly trackMsgQueue: Queue,
-  ) { }
+  constructor(@InjectQueue('track-message') private readonly trackMsgQueue: Queue) {}
 
   async trackDelayedMessage() {
     await this.trackMsgQueue.add(
@@ -20,8 +17,8 @@ export class TrackMessageService implements OnModuleInit {
       {},
       {
         repeat: {
-          every: 5 * 60 * 1000,
-        },
+          every: 5 * 60 * 1000
+        }
       }
     );
   }

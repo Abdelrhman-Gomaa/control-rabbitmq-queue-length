@@ -6,9 +6,12 @@ import { MessageModule } from './send-message/send-message.module';
 import { ConsumersModule } from './consuming-message/consumers.module';
 import { NestBullModule } from './_common/bull/bull.module';
 import { TrackMessageModule } from './track-message/track-message.module';
+import getConfigSchema from './_common/config/config.schema';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
+    CategoryModule,
     ConsumersModule,
     MessageModule,
     TrackMessageModule,
@@ -17,7 +20,12 @@ import { TrackMessageModule } from './track-message/track-message.module';
     NestBullModule,
     ConfigModule.forRoot({
       envFilePath: '.env',
-    }),
+      validationSchema: getConfigSchema(),
+      validationOptions: {
+        allowUnknown: true,
+        abortEarly: true
+      }
+    })
   ]
 })
-export class AppModule { }
+export class AppModule {}
