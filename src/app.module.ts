@@ -8,11 +8,12 @@ import { NestBullModule } from './_common/bull/bull.module';
 import { TrackMessageModule } from './track-message/track-message.module';
 import getConfigSchema from './_common/config/config.schema';
 import { CategoryModule } from './category/category.module';
-import { CountMiddleware } from './send-message/message-requests.middleware';
-import rateLimit from 'express-rate-limit';
+import { RateLimitModule } from './rateLimit/rate-limit.module';
+import { RateLimitMiddleware } from './rateLimit/rate-limit.middleware';
 
 @Module({
   imports: [
+    RateLimitModule,
     CategoryModule,
     ConsumersModule,
     MessageModule,
@@ -32,12 +33,13 @@ import rateLimit from 'express-rate-limit';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    const limiter = rateLimit({
-      windowMs: 10000, // 10 second
-      max: 2
-    });
+    // const limiter = rateLimit({
+    //   windowMs: 10000, // 10 second
+    //   max: 2,
+    //   message: 'Exceeded max request rate'
+    // });
     consumer
-      .apply(CountMiddleware, limiter)
+      .apply(RateLimitMiddleware)
       .forRoutes({ path: 'message', method: RequestMethod.POST });
   }
 }
