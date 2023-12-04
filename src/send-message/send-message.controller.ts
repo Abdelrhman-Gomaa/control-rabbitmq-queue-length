@@ -1,14 +1,15 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { MessageService } from './send-message.service';
-import { SendMessageInput } from './input/send-message.input';
-import { Message } from './models/message.model';
+import { IMessage, IUpdateMessage } from './message.interface';
+import { JoiValidationPipe } from 'src/_common/pipes/joi-validation.pipe';
+import schema from './message.schema';
 
 @Controller('message')
 export class MessageController {
   constructor(private readonly messageService: MessageService) { }
 
   @Post()
-  pushMessageToQueue(@Body() input: SendMessageInput): Promise<Message> {
+  pushMessageToQueue(@Body(new JoiValidationPipe(schema.addMessage)) input: IUpdateMessage): Promise<IMessage> {
     return this.messageService.pushMessageToQueue(input);
   }
 }

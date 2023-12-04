@@ -1,15 +1,16 @@
 import { InjectQueue, OnGlobalQueueActive, OnQueueActive, Process, Processor } from '@nestjs/bull';
 import { Job, Queue } from 'bull';
 import { RabbitMQService } from 'src/_common/rabbitmq-config/rabbitmq.service';
-import { Message } from 'src/send-message/models/message.model';
+import { MessageRepository } from 'src/send-message/message.repository';
 import { messageTypeEnum } from 'src/send-message/send-message.enum';
 
 @Processor('track-message')
 export class trackMessageProcessor {
   constructor(
     private readonly rabbitmqService: RabbitMQService,
-    @InjectQueue('track-message') private readonly trackMsgQueue: Queue,
-  ) { }
+    private readonly messageRepo: MessageRepository,
+    @InjectQueue('track-message') private readonly trackMsgQueue: Queue
+  ) {}
 
   @Process('track-messageJob')
   async handle() {
@@ -20,8 +21,7 @@ export class trackMessageProcessor {
   @OnQueueActive()
   async onQueueActive(job: Job) {
     console.log('-------- messageJob onQueueActive --------');
-    if (!(await job?.finished()))
-      await this.process();
+    if (!(await job?.finished())) await this.process();
   }
 
   @OnGlobalQueueActive()
@@ -46,7 +46,10 @@ export class trackMessageProcessor {
         return;
       } else {
         // get pending message not sent to queue from db
-        const pendingMessage = await Message.query().where({ type: messageTypeEnum.pending, isPublished: false });
+        const pendingMessage = await this.messageRepo.getAll({
+          type: messageTypeEnum.pending,
+          isPublished: false
+        });
         // calculate space free in queue
         const spaceFreeInQueue = 10 - queue.messageCount;
 
@@ -63,11 +66,19 @@ export class trackMessageProcessor {
               from: message.from,
               content: message.content
             });
-            await this.rabbitmqService.publishMessage(payload, process.env.RABBITMQ_ROUTING_KEY, process.env.RABBITMQ_QUEUE);
+            await this.rabbitmqService.publishMessage(
+              payload,
+              process.env.RABBITMQ_ROUTING_KEY,
+              process.env.RABBITMQ_QUEUE
+            );
             messagesIds.push(message.id);
           }
           // update message have sent to queue in db to be a true
-          await Message.query().whereIn('id', messagesIds).patch({ isPublished: true });
+          await this.messageRepo.update(
+            {},
+            { isPublished: true },
+            { whereIn: [{ field: 'id', values: messagesIds }] }
+          );
         } else {
           console.log('>>>>>>>>>> spaceFreeInQueue');
           // send all messages pending in db to queue
@@ -79,9 +90,17 @@ export class trackMessageProcessor {
               content: message.content
             });
             messagesIds.push(message.id);
-            await this.rabbitmqService.publishMessage(payload, process.env.RABBITMQ_ROUTING_KEY, process.env.RABBITMQ_QUEUE);
+            await this.rabbitmqService.publishMessage(
+              payload,
+              process.env.RABBITMQ_ROUTING_KEY,
+              process.env.RABBITMQ_QUEUE
+            );
           });
-          await Message.query().whereIn('id', messagesIds).patch({ isPublished: true });
+          await this.messageRepo.update(
+            {},
+            { isPublished: true },
+            { whereIn: [{ field: 'id', values: messagesIds }] }
+          );
         }
       }
       jobCase.statusChanged = true;

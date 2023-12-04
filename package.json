@@ -23,6 +23,7 @@
   "dependencies": {
     "@bull-board/api": "^5.9.1",
     "@bull-board/express": "^5.9.1",
+    "@joi/date": "^2.1.0",
     "@nestjs/bull": "^10.0.1",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.1.1",
@@ -34,7 +35,7 @@
     "bull": "^4.11.5",
     "dotenv": "^16.3.1",
     "expressjs-errors-handler": "^1.0.13",
-    "joi": "^17.8.4",
+    "joi": "^17.7.0",
     "knex": "^2.5.1",
     "objection": "^3.1.2",
     "objectionjs-repository": "^1.0.4",
