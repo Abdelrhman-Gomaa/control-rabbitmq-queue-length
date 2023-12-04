@@ -30,13 +30,13 @@ export class CategoryService {
     const result: any = { categories: [] };
     const categoriesResult: any = await this.categoryRepository.categories(filter);
     if (!R.isNil(categoriesResult.results)) {
-      result.users = categoriesResult.results;
+      result.categories = categoriesResult.results;
       result.pages = {
         total_items: categoriesResult.total,
         total_pages: Math.ceil(categoriesResult.total / (filter?.pageSize || 10))
       };
     } else {
-      result.users = categoriesResult;
+      result.categories = categoriesResult;
     }
     return result;
   }

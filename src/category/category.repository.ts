@@ -37,10 +37,10 @@ export class CategoryRepository extends BaseRepository<ICategory> {
 
     if (!R.isNil(filter.q)) {
       query = query.andWhere((builder: any) => {
-        builder.whereRaw('enTitle ilike ?', [`%${filter.q}%`]);
-        builder.whereRaw('arTitle ilike ?', [`%${filter.q}%`]);
-        builder.whereRaw('enDescription ilike ?', [`%${filter.q}%`]);
-        builder.whereRaw('arDescription ilike ?', [`%${filter.q}%`]);
+        builder.whereRaw('"enTitle" ilike ?', [`%${filter.q}%`]);
+        builder.orWhereRaw('"arTitle" ilike ?', [`%${filter.q}%`]);
+        builder.orWhereRaw('"enDescription" ilike ?', [`%${filter.q}%`]);
+        builder.orWhereRaw('"arDescription" ilike ?', [`%${filter.q}%`]);
       });
     }
 
