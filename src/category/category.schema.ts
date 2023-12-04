@@ -8,7 +8,7 @@ const commonSchema = {
     .required(),
   arTitle: Joi.string()
     .max(200)
-    .regex(/^.*[a-zA-Z].*/)
+    .regex(/^.*[a-zA-Z\u0600-\u06FF].*/)
     .trim()
     .required(),
   enDescription: Joi.string()
@@ -18,7 +18,7 @@ const commonSchema = {
     .required(),
   arDescription: Joi.string()
     .max(200)
-    .regex(/^.*[a-zA-Z].*/)
+    .regex(/^.*[a-zA-Z\u0600-\u06FF].*/)
     .trim()
     .required(),
   isPublished: Joi.boolean().default(true)
@@ -35,7 +35,7 @@ const schema = {
     ids: Joi.array().items(Joi.number()).required()
   }),
   listCategories: Joi.object({
-    page: Joi.number().min(-1).required(),
+    page: Joi.number().min(-1).optional().default(1),
     pageSize: Joi.number().optional(),
     q: Joi.string().max(200).allow('').optional(),
     categories: Joi.array().items(Joi.number()).optional(),
