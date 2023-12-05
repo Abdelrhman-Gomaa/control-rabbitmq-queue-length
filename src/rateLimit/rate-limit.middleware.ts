@@ -14,7 +14,7 @@ export class RateLimitMiddleware implements NestMiddleware {
   }
 
   async updateLimit() {
-    this.currentLimit = await this.rateLimitService.rateLimit();
+    this.currentLimit = (await this.rateLimitService.rateLimitFromRedis()).rateLimit;
   }
 
   use(req: Request, res: Response, next: NextFunction) {
@@ -30,7 +30,6 @@ export class RateLimitMiddleware implements NestMiddleware {
       requestInfo.count++;
       return next();
     }
-
     res.status(429).send(this.currentLimit.message);
   }
 }

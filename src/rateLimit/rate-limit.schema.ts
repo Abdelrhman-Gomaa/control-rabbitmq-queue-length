@@ -7,7 +7,7 @@ const commonSchema = {
     .max(200)
     .regex(/^.*[a-zA-Z\u0600-\u06FF].*/)
     .trim()
-    .required()
+    .optional()
 };
 
 const schema = {

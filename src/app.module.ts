@@ -10,9 +10,11 @@ import getConfigSchema from './_common/config/config.schema';
 import { CategoryModule } from './category/category.module';
 import { RateLimitModule } from './rateLimit/rate-limit.module';
 import { RateLimitMiddleware } from './rateLimit/rate-limit.middleware';
+import { RedisModule } from './_common/redis/redis.module';
 
 @Module({
   imports: [
+    RedisModule,
     RateLimitModule,
     CategoryModule,
     ConsumersModule,
