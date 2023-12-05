@@ -5,7 +5,7 @@ import { RateLimitService } from './rate-limit.service';
 
 @Injectable()
 export class RateLimitMiddleware implements NestMiddleware {
-  private requestsCounter = new Map<string, { count: number; resetTime: number }>();
+  private requestsCounter: { count: number; resetTime: number };
   private currentLimit: IRateLimit;
 
   constructor(private readonly rateLimitService: RateLimitService) {
@@ -18,12 +18,11 @@ export class RateLimitMiddleware implements NestMiddleware {
   }
 
   use(req: Request, res: Response, next: NextFunction) {
-    const key = req.url;
     const now = Date.now();
-    const requestInfo = this.requestsCounter.get(key);
+    let requestInfo = this.requestsCounter;
 
     if (!requestInfo || now > requestInfo.resetTime) {
-      this.requestsCounter.set(key, { count: 1, resetTime: now + this.currentLimit.windowsMs });
+      this.requestsCounter = { count: 1, resetTime: now + this.currentLimit.windowsMs };
       return next();
     }
 
